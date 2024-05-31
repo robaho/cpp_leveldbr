@@ -229,7 +229,7 @@ void LevelDbService::Lookup(Stream stream,ConnState& state,const ::remote::Looku
 	if(itr.get() != nullptr) {
 		state.next++;
 		id = state.next;
-		state.itrs[id] = itr;
+		state.itrs[id] = std::move(itr);
 	}
     ::remote::OutMessage out;
     auto reply = out.mutable_lookup();
@@ -239,14 +239,14 @@ void LevelDbService::Lookup(Stream stream,ConnState& state,const ::remote::Looku
 }
 
 void LevelDbService::LookupNext(Stream stream,ConnState& state,const ::remote::LookupNextRequest& msg) {
-	LookupRef itr;
+	LookupIterator *itr;
     std::string error = "";
 
     ::remote::OutMessage out;
     auto reply = out.mutable_next();
 
-    itr = state.itrs[msg.id()];
-    if(itr.get()==nullptr) {
+    itr = state.itrs[msg.id()].get();
+    if(itr==nullptr) {
         error = "invalid iterator id";
     } else {
 		int count = 0;

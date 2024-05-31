@@ -8,9 +8,11 @@ CXXFLAGS = -std=c++20 -O3 -Wall -pedantic-errors -Wno-gcc-compat -g -I. -I${CPP_
 
 HEADERS = ${wildcard *.h}
 
-SRCS = main_server.cpp main_client.cpp server.cpp 
+SRCS = main_server.cpp main_client.cpp server.cpp client.cpp
 
 PROTO_OBJS = bin/leveldbr.pb.o bin/leveldbr.grpc.pb.o
+
+client.h: generate
 
 leveldbr.pb.cc: leveldbr.proto
 	protoc --cpp_out=. leveldbr.proto
@@ -27,10 +29,10 @@ bin/leveldbr.grpc.pb.o: leveldbr.grpc.pb.cc
 	${CXX} ${CXXFLAGS} -c $(notdir $(basename $@).cc) -o $@
 
 SERVER_OBJS = bin/main_server.o bin/server.o ${PROTO_OBJS}
-SERVER = bin/cpp_leveldbr
+SERVER = bin/cpp_leveldb_server
 
-CLIENT_OBJS = bin/main_client.o ${PROTO_OBJS}
-CLIENT = bin/cpp_leveldbrc
+CLIENT_OBJS = bin/main_client.o bin/client.o ${PROTO_OBJS}
+CLIENT = bin/cpp_leveldb_client
 
 .PRECIOUS: bin/%.o
 
@@ -43,10 +45,12 @@ ${SERVER}: ${SERVER_OBJS}
 ${CLIENT}: ${CLIENT_OBJS}
 	${CXX} ${CXXFLAGS} ${CLIENT_OBJS} ${CPP_LEVELDB}/bin/cpp_leveldb.a -o ${CLIENT} -lprotobuf -labsl_log_internal_message -labsl_log_internal_check_op -labsl_status -l absl_cord -labsl_strings -lgrpc++ -lgrpc -lgpr
 
-
 bin/%.o: %.cpp ${HEADERS}
 	@ mkdir -p bin
 	${CXX} ${CXXFLAGS} -c $(notdir $(basename $@).cpp) -o $@
+
+generate: ${PROTO_OBJS}
+	@ echo generated proto files
 
 clean:
 	rm -rf bin *~.
