@@ -139,8 +139,7 @@ RemoteIterator RemoteDatabase::snapshotLookup(uint64_t id,const Slice& lower,con
     auto reply = response.lookup();
     if(reply.error()!="") mapError(reply.error());
 
-    RemoteIterator itr(reply.id(),RemoteDb(weakRef));
-    return itr;
+    return RemoteIterator(reply.id(),RemoteDb(weakRef));
 }
 
 KeyValue RemoteIterator::next() {

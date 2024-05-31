@@ -20,6 +20,7 @@ private:
     RemoteIterator(uint64_t id,RemoteDb db) : id(id), db(db){}
 public:
     KeyValue next();
+    RemoteIterator(const RemoteIterator& ri) = delete;
 };
 
 class RemoteSnapshot {

@@ -2,6 +2,15 @@
 #include "exceptions.h"
 #include <stdexcept>
 
+static void iterate(RemoteIterator& itr) {
+    auto kv = itr.next();
+
+    if(kv.key!="my key") throw std::runtime_error("invalid lookup key");
+    if(kv.value!="my value") throw std::runtime_error("invalid lookup value");
+
+    std::cout << "read lookup!\n";
+}
+
 int main(int argc,char **argv) {
     try {
         RemoteDatabase::remove("localhost:8501","main",0);
@@ -16,12 +25,7 @@ int main(int argc,char **argv) {
     std::cout << "read value!\n";
 
     auto itr = db->lookup("","");
-    auto kv = itr.next();
-
-    if(kv.key!="my key") throw std::runtime_error("invalid lookup key");
-    if(kv.value!="my value") throw std::runtime_error("invalid lookup value");
-
-    std::cout << "read lookup!\n";
+    iterate(itr);
 
     db->close();
 }
