@@ -158,7 +158,7 @@ KeyValue RemoteIterator::next() {
     try {
         if(reply.error()!="") mapError(reply.error());
     } catch(EndOfIterator& ex) {
-        return KeyValue::EMPTY;
+        return KeyValue::EMPTY();
     }
 
     std::vector<KeyValue> entries(reply.entries_size());
