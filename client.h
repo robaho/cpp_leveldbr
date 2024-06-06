@@ -19,7 +19,7 @@ private:
     int index=0;
     RemoteIterator(uint64_t id,RemoteDb db) : id(id), db(db){}
 public:
-    KeyValue next();
+    const KeyValue& next();
     RemoteIterator(const RemoteIterator& ri) = delete;
 };
 

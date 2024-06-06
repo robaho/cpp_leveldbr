@@ -142,7 +142,7 @@ RemoteIterator RemoteDatabase::snapshotLookup(uint64_t id,const Slice& lower,con
     return RemoteIterator(reply.id(),RemoteDb(weakRef));
 }
 
-KeyValue RemoteIterator::next() {
+const KeyValue& RemoteIterator::next() {
     if(index<entries.size()) {
         return entries[index++];
     }
@@ -161,10 +161,11 @@ KeyValue RemoteIterator::next() {
         return KeyValue::EMPTY();
     }
 
-    std::vector<KeyValue> entries(reply.entries_size());
-    int index = 0;
+    entries.clear();
+    entries.reserve(reply.entries_size());
+    
     for(auto e : reply.entries()) {
-        entries[index++]=KeyValue(e.key(),e.value());
+        entries.push_back(KeyValue(e.key(),e.value()));
     }
     index=1;
     return entries[0];
