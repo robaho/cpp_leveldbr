@@ -2,8 +2,6 @@
 #include <string>
 
 #include "exceptions.h"
-#include "grpc/grpc.h"
-#include "grpcpp/channel.h"
 #include "grpcpp/create_channel.h"
 #include "grpcpp/security/credentials.h"
 #include "client.h"

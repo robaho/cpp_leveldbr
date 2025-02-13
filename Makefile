@@ -1,5 +1,5 @@
 # set this to the cpp_leveldb top-level project directory
-CPP_LEVELDB = /Users/robertengels/cpp_leveldb
+CPP_LEVELDB = ../cpp_leveldb
 
 CXX = clang++
 # CXXFLAGS = -std=c++20 -Wall -fsanitize=address -fno-omit-frame-pointer -pedantic-errors -g -I include
@@ -11,6 +11,8 @@ HEADERS = ${wildcard *.h}
 SRCS = main_server.cpp main_client.cpp server.cpp client.cpp
 
 PROTO_OBJS = bin/leveldbr.pb.o bin/leveldbr.grpc.pb.o
+
+ABSL=-labsl_log_internal_message -labsl_log_internal_check_op -labsl_status -l absl_cord -labsl_strings -labsl_log_globals -labsl_log_internal_nullguard
 
 client.h: generate
 
@@ -40,10 +42,10 @@ all: ${SERVER} ${CLIENT}
 	@echo compile finished
 
 ${SERVER}: ${SERVER_OBJS}
-	${CXX} ${CXXFLAGS} ${SERVER_OBJS} ${CPP_LEVELDB}/bin/cpp_leveldb.a -o ${SERVER} -lprotobuf -labsl_log_internal_message -labsl_log_internal_check_op -labsl_status -l absl_cord -labsl_strings -lgrpc++ -lgrpc -lgpr
+	${CXX} ${CXXFLAGS} ${SERVER_OBJS} ${CPP_LEVELDB}/bin/cpp_leveldb.a -o ${SERVER} -lprotobuf  -lgrpc++ -lgrpc -lgpr ${ABSL}
 
 ${CLIENT}: ${CLIENT_OBJS}
-	${CXX} ${CXXFLAGS} ${CLIENT_OBJS} ${CPP_LEVELDB}/bin/cpp_leveldb.a -o ${CLIENT} -lprotobuf -labsl_log_internal_message -labsl_log_internal_check_op -labsl_status -l absl_cord -labsl_strings -lgrpc++ -lgrpc -lgpr
+	${CXX} ${CXXFLAGS} ${CLIENT_OBJS} ${CPP_LEVELDB}/bin/cpp_leveldb.a -o ${CLIENT} -lprotobuf -lgrpc++ -lgrpc -lgpr ${ABSL} 
 
 bin/%.o: %.cpp ${HEADERS}
 	@ mkdir -p bin
